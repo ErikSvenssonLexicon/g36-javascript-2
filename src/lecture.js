@@ -1,3 +1,5 @@
+//OBJECTS
+//This represents the state of the application
 const state = {
   people: [],
   formValues: {
@@ -6,6 +8,7 @@ const state = {
   },
 };
 
+//Using object destructuring to pull out fields from state.formValues
 const createPerson = ({ inputNameValue, inputBirthDateValue }) => {
   return {
     id: `${Math.floor(Math.random() * 1000000)}`,
@@ -19,6 +22,10 @@ const createPerson = ({ inputNameValue, inputBirthDateValue }) => {
   };
 };
 
+//------------------------
+//EVENT HANDLER FUNCTIONS:
+
+//Callback function called from event listener when form is submitted. 
 const handleFormSubmit = (event) => {
   //Preventing default submit event from refreshing the page
   event.preventDefault();
@@ -36,24 +43,35 @@ const handleFormSubmit = (event) => {
   renderPeople(state);
 };
 
-const handleNameChange = (event) =>
-  (state.formValues.inputNameValue = event.target.value);
-const handleBirthDateChange = (event) =>
-  (state.formValues.inputBirthDateValue = event.target.value);
+//Callback function called from event listener when name input changes in html
+const handleNameChange = event => state.formValues.inputNameValue = event.target.value;
 
+//Callback function  called from event listener when birthDate input changes in html
+const handleBirthDateChange = event => state.formValues.inputBirthDateValue = event.target.value;
+
+//Function called directly from html whenever user clicks table row.
 const handleRemove = element => {
     state.people = state.people.filter(person => person.id !== element.id);
     renderPeople(state);
 }
+//----------------
+//EVENT LISTENERS:
 
+//Listens to event 'submit' on form with id 'myForm'
 document.getElementById("myForm").addEventListener("submit", handleFormSubmit);
+//Listens to event 'change' on input field with id 'name'
 document.getElementById("name").addEventListener("change", handleNameChange);
+//Listens to event 'change' on input field with id 'bithDate'
 document.getElementById("birthDate").addEventListener("change", handleBirthDateChange);
 
+//----------------
+
+//Factory method returning element where type = html element and ...classes a vararg with all css classes
 const createElement = (type, ...classes) => {
   const element = document.createElement(type);
   if (classes.length > 0) {
-      for(css of classes){
+      //Equivalent to for(String css : classes) 
+      for(const css of classes){
           element.classList.add(css);
       } 
   }
@@ -61,6 +79,8 @@ const createElement = (type, ...classes) => {
   return element;
 };
 
+//RENDER FUNCTION(S):
+//This function gets called whenever a (re)render of the people table is needed
 const renderPeople = ({ people }) => {
   const container = document.getElementById("people");
   container.innerHTML = "";
@@ -80,7 +100,6 @@ const renderPeople = ({ people }) => {
 
     const tbody = document.createElement("tbody");
     const trs = people.map((person) => {
-
       const row = `<tr onclick="handleRemove(this)" id=${person.id}>
         <td>${person.name}</td>
         <td>${person.birthDate}</td>
@@ -100,4 +119,6 @@ const renderPeople = ({ people }) => {
   }
 };
 
+//-----------------
+//Called directly when opening the page to render the initial state
 renderPeople(state);
